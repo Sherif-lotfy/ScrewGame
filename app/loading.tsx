@@ -8,7 +8,7 @@ const Loading: React.FC = ()=>{
       src="/loading.gif"
       width={50}
       height={50}
-      alt="Picture of the author"
+      alt="Loading.."
     />
     
         Loading..
