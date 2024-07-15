@@ -1,5 +1,5 @@
 "use Client";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, use, useState } from "react";
 import useRoomIdCheck from "../hooks/useRoomIdCheck";
 import { createRoom } from "./create.new.room";
 import { player, inspector } from "./theJoin'stwoFuncs";
@@ -20,6 +20,7 @@ const Lobby = () => {
   const [warning1, setWarning1] = useState<string>("");
   const [warning2, setWarning2] = useState<string>("");
   const [joinBTNs, setJoinBTNs] = useState<boolean>(false);
+  const [isFull , setIsFull] = useState<boolean>(false);
   const data = useGetData(roomId);
 
   const userNameWarning = 'You have to write a userName...';
@@ -43,6 +44,12 @@ const Lobby = () => {
       setWarning2(roomIdWarning);
     } else {
       setJoinBTNs(true);
+      if(data){
+        if(data.numPlayers >= 6){
+          setIsFull(true);
+        }
+      }
+
     }
   }
 
@@ -67,13 +74,15 @@ const Lobby = () => {
         <input type="button" onClick={join} className="outline-none h-6 rounded-md color3 cursor-pointer hover:opacity-95 active:scale-95 transition-all col-span-2" name="btn" value={'JOIN'} />
         <div className="col-span-2">
           {
-            joinBTNs ?
-              <div className="p-4 flex flex-col text-center">
-                Do you prefer to be a player or inspector?.
-                <input type="button" onClick={() => { player({ roomId, userName, data }) }} className="outline-none w-full h-6 rounded-md color3 cursor-pointer hover:opacity-95 active:scale-95 transition-all" value={'PLAYER'} />OR
-                <input type="button" onClick={() => { inspector({ roomId, userName, data }) }} className="outline-none w-full h-6 rounded-md color3 cursor-pointer hover:opacity-95 active:scale-95 transition-all" value={'INSPECTOR'} />
+            joinBTNs && isFull ?
+            <div className="p-4 flex flex-col text-center">
+              <input type="button" onClick={() => { inspector({ roomId, userName, data }) }} className="outline-none w-full h-6 rounded-md color3 cursor-pointer hover:opacity-95 active:scale-95 transition-all" value={'INSPECTOR'} />
               </div>
-              : ""
+            :joinBTNs && !isFull?<div className="p-4 flex flex-col text-center">
+              Do you prefer to be a player or inspector?.
+              <input type="button" onClick={() => { player({ roomId, userName, data }) }} className="outline-none w-full h-6 rounded-md color3 cursor-pointer hover:opacity-95 active:scale-95 transition-all" value={'PLAYER'} />OR
+              <input type="button" onClick={() => { inspector({ roomId, userName, data }) }} className="outline-none w-full h-6 rounded-md color3 cursor-pointer hover:opacity-95 active:scale-95 transition-all" value={'INSPECTOR'} />
+              </div>:""
           }
         </div>
         <label htmlFor="btn">Create New Room: </label>
